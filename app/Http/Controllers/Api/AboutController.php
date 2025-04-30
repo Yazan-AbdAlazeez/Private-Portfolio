@@ -13,7 +13,6 @@ class AboutController extends Controller
     public function store(Request $request, $portfolioId)
     {
         $portfolio = Portfolio::findOrFail($portfolioId);
-        $this->authorizeAccess($portfolio);
 
         $request->validate([
             'content' => 'required|string',
@@ -35,7 +34,6 @@ class AboutController extends Controller
     public function show($portfolioId)
     {
         $portfolio = Portfolio::findOrFail($portfolioId);
-        $this->authorizeAccess($portfolio);
 
         $about = $portfolio->about;
 
@@ -49,7 +47,6 @@ class AboutController extends Controller
     public function destroy($portfolioId)
     {
         $portfolio = Portfolio::findOrFail($portfolioId);
-        $this->authorizeAccess($portfolio);
 
         $about = $portfolio->about;
 
@@ -60,13 +57,5 @@ class AboutController extends Controller
         $about->delete();
 
         return response()->json(['message' => 'About section deleted successfully'], 200);
-    }
-
-
-    protected function authorizeAccess(Portfolio $portfolio)
-    {
-        if ($portfolio->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized');
-        }
     }
 }
