@@ -28,17 +28,17 @@ class WorkController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image_path' => 'nullable|string',
+            'image_path' => 'image|required',
             'link' => 'nullable|url',
         ]);
+        $data = $request->all();
+
         if ($request->hasFile('image_path')) {
-            $imagePath = $request->file('image_path')->store('images', 'public');
+            $imageName = $request->file('image_path')->store('images', 'public'); 
+            $data['image_path'] = $imageName; 
         }
     
-        $workData = $request->all();
-        $workData['image_path'] = $imagePath; 
-    
-        $work = $portfolio->works()->create($workData);     
+        $work = $portfolio->works()->create($data);
         return response()->json($work);
     }
 
@@ -49,9 +49,22 @@ class WorkController extends Controller
         if (!$work) {
             return response()->json(['message' => 'Work not found'], 404);
         }
-
-        $work->update($request->all());
-        return response()->json(['message' => 'Work updated successfully', 'Work' => $work], 200);
+    
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'image_path' => 'image|required',
+            'link' => 'nullable|url',
+        ]);
+    
+        if ($request->hasFile('image_path')) {
+            $imageName = $request->file('image_path')->store('images', 'public');
+            $validatedData['image_path'] = $imageName; 
+        }
+    
+        $work->update($validatedData);
+    
+        return response()->json(['message' => 'Work updated successfully', 'work' => $work], 200);
     }
 
     public function destroy($portfolioId, $workId)

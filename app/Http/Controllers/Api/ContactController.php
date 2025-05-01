@@ -12,7 +12,6 @@ class ContactController extends Controller
     public function store(Request $request, $portfolioId)
     {
         $portfolio = Portfolio::findOrFail($portfolioId);
-        $this->authorizeAccess($portfolio);
 
         $request->validate([
         'email' => 'required|email|max:255',
@@ -34,7 +33,6 @@ class ContactController extends Controller
     public function show($portfolioId)
     {
         $portfolio = Portfolio::findOrFail($portfolioId);
-        $this->authorizeAccess($portfolio);
 
         $contact = $portfolio->contact;
 
@@ -48,7 +46,6 @@ class ContactController extends Controller
     public function destroy($portfolioId)
     {
         $portfolio = Portfolio::findOrFail($portfolioId);
-        $this->authorizeAccess($portfolio);
 
         $contact = $portfolio->contact;
 
@@ -61,11 +58,4 @@ class ContactController extends Controller
         return response()->json(['message' => 'Contact section deleted successfully'], 200);
     }
 
-
-    protected function authorizeAccess(Portfolio $portfolio)
-    {
-        if ($portfolio->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized');
-        }
-    }
 }
