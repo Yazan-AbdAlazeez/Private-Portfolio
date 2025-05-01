@@ -12,16 +12,15 @@ class SocialLinkController extends Controller
     public function index($portfolioId)
     {
         $portfolio = Portfolio::findOrFail($portfolioId);
-
-        $SocialLink = $portfolio->SocialLinks;
-
-        if (!$SocialLink) {
+    
+        $socialLinks = $portfolio->SocialLinks; 
+    
+        if ($socialLinks->isEmpty()) {
             return response()->json(['message' => 'SocialLink section not found'], 404);
         }
-
-        return response()->json($SocialLink, 200);
-    }
-    public function store(Request $request, $portfolioId)
+    
+        return response()->json($socialLinks, 200);
+    }    public function store(Request $request, $portfolioId)
     {
         $portfolio = Portfolio::findOrFail($portfolioId);
         $request->validate([
